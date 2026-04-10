@@ -1,0 +1,30 @@
+services:
+  tooljet:
+    tty: true
+    stdin_open: true
+    container_name: Tooljet-app
+    image: tooljet/tooljet-ce:latest
+    restart: always
+    env_file: .env
+    ports:
+      - 80:80
+    environment:
+      SERVE_CLIENT: "true"
+      PORT: "80"
+    command: npm run start:prod
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13
+    restart: always
+    container_name: tooljet-postgres
+    environment:
+      POSTGRES_DB: tooljet_db
+      POSTGRES_USER: tooljet
+      POSTGRES_PASSWORD: tooljet
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
