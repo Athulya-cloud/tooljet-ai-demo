@@ -1,0 +1,107 @@
+# Architecture Evolution — ToolJet AI Demo
+
+## 1. Problem Statement
+
+We needed a secure way to distribute a private AI service to self-hosted ToolJet clients without exposing the underlying source code.
+
+---
+
+## 2. Initial Approach (Multi-Container)
+
+The first approach used Docker Compose to run multiple services:
+
+- AI server (custom service)
+- Neo4j (graph database)
+- ToolJet (existing service)
+
+Each service ran in its own container.
+
+### Advantages
+- Clean separation of concerns
+- Independent scaling and updates
+- Follows Docker best practices
+
+### Limitations
+- Requires Docker Compose knowledge
+- Multiple services to manage
+- Higher setup complexity for clients
+
+---
+
+## 3. Distribution Strategy
+
+To keep the AI server private:
+
+- Built a Docker image
+- Pushed it to GitHub Container Registry (GHCR)
+- Restricted access via GitHub usernames
+- Clients authenticate using a `read:packages` token
+
+---
+
+## 4. Problem with Initial Setup
+
+Although technically sound, the multi-container setup increased friction for users:
+
+- Multiple commands required
+- Dependency management complexity
+- Harder onboarding for non-technical users
+
+---
+
+## 5. Revised Approach (Single Container)
+
+To simplify the client experience, we explored bundling services into a single Docker container.
+
+This reduces setup to a single command:
+
+```bash
+docker run <image>
+
+6. Role of Supervisor
+
+Supervisor is a process control system used to manage multiple processes inside a single container.
+
+Docker containers are designed to run a single process. Supervisor enables:
+
+Running multiple services simultaneously
+Restarting services if they fail
+Centralized logging
+7. Why Supervisor Was Needed
+
+Without Supervisor:
+
+Only one service can run reliably
+Multiple commands are difficult to manage
+No automatic restarts
+
+With Supervisor:
+
+Multiple services run in parallel
+System becomes more resilient
+Enables single-container architecture
+8. Tradeoffs
+Multi-Container	Single Container
+Clean architecture	Simpler setup
+Scalable	Easy to distribute
+Requires Compose	Single command
+9. POC Implementation
+
+For demonstration purposes, we implemented:
+
+AI server (port 8000)
+Dummy service (port 8001)
+
+Both managed by Supervisor in a single container.
+
+This validates the feasibility of bundling services.
+
+10. Key Takeaways
+Docker Compose is ideal for modular systems
+Supervisor enables multi-process containers
+GHCR provides secure distribution
+Simpler UX often requires architectural tradeoffs
+11. Future Improvements
+Multi-architecture image builds (ARM + AMD)
+Replace dummy service with real AI components
+Evaluate hybrid approach (core bundled + optional services external)
