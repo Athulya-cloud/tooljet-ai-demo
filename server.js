@@ -6,5 +6,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(8002, () => {
-  console.log('ToolJet AI Server running on port 8000');
+  console.log('ToolJet AI Server running on port 8002');
 });
