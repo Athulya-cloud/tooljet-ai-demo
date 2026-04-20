@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   tooljet-ai:
-    image: ghcr.io/athulya-cloud/tooljet-ai-demo:latest
+    image: ghcr.io/athulya-cloud/tooljet-ai-server:latest
     container_name: tooljet-ai
     ports:
       - "8000:8000"
