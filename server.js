@@ -5,6 +5,6 @@ const server = http.createServer((req, res) => {
   res.end(JSON.stringify({ status: 'ok', message: 'ToolJet AI Server' }));
 });
 
-server.listen(8000, () => {
+server.listen(8002, () => {
   console.log('ToolJet AI Server running on port 8000');
 });
