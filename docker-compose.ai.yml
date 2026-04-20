@@ -5,7 +5,7 @@ services:
     image: ghcr.io/athulya-cloud/tooljet-ai-server:latest
     container_name: tooljet-ai
     ports:
-      - "8003:8000"
+      - "8080:8000"
     networks:
       - tooljet-network
 
