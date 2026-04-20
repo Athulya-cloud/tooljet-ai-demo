@@ -70,14 +70,14 @@ docker compose -f docker-compose.yaml -f docker-compose.ai.yml up -d \
 # step 7: health check
 info "Waiting for services to be ready..."
 sleep 5
-curl -sf http://localhost:8000 >/dev/null \
+curl -sf http://localhost:8080 >/dev/null \
   && ok "AI Server is healthy!" \
-  || info "AI Server still starting up — check http://localhost:8000 in a moment"
+  || info "AI Server still starting up — check http://localhost:8080 in a moment"
 
 echo ""
 echo "========================================"
 echo "  ToolJet      → http://localhost:80"
-echo "  AI Server    → http://localhost:8000"
+echo "  AI Server    → http://localhost:8080"
 echo "  Neo4j        → http://localhost:7474"
 echo "========================================"
 echo ""
