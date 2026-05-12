@@ -1,6 +1,17 @@
 #!/bin/bash
 set -e
+START_PORT=8000
+END_PORT=8010
 
+find_free_port() {
+  for ((port=$START_PORT; port<=$END_PORT; port++)); do
+    if ! lsof -i :$port >/dev/null 2>&1; then
+      echo $port
+      return 0
+    fi
+  done
+  return 1
+}
 GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; NC='\033[0m'
 ok()   { echo -e "${GREEN}✔ $1${NC}"; }
 fail() { echo -e "${RED}✘ $1${NC}"; exit 1; }
