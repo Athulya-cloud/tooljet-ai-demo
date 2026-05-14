@@ -48,7 +48,7 @@ if [ ! -f "docker-compose.yaml" ] && [ ! -f "docker-compose.yml" ]; then
   # create default .env if missing
   if [ ! -f ".env" ]; then
     info "Creating default .env file..."
-    cat > .env << 'ENVEOF'
+cat > .env << ENVEOF
 TOOLJET_HOST=http://localhost:80
 LOCKBOX_MASTER_KEY=changeme_lockbox_key
 SECRET_KEY_BASE=changeme_secret_key
@@ -60,8 +60,10 @@ PG_DB=tooljet_db
 PG_USER=tooljet
 PG_PASS=tooljet
 PG_HOST=postgres
-AI_PORT=${AI_PORT:-8080}
-NEO4JPASSWORD=$(openssl rand -base64 12)
+AI_PORT=${AI_PORT:-$(find_free_port)}
+NEO4J_PASSWORD=$(openssl rand -hex 16)
+NEO4J_HTTP_PORT=${NEO4J_HTTP_PORT:-7474}
+NEO4J_BOLT_PORT=${NEO4J_BOLT_PORT:-7687}
 ENVEOF
     ok "Created .env file"
   fi
@@ -90,7 +92,7 @@ curl -sf http://localhost:8000 >/dev/null \
 echo ""
 echo "========================================"
 echo "  ToolJet      → http://localhost:80"
-echo "  AI Server    → http://localhost:8000"
-echo "  Neo4j        → http://localhost:7474"
+echo "  AI Server    → http://localhost:${AI_PORT}"
+echo "  Neo4j        → http://localhost:${NEO4J_HTTP_PORT}"
 echo "========================================"
 echo ""
