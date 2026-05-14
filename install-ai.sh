@@ -60,6 +60,8 @@ PG_DB=tooljet_db
 PG_USER=tooljet
 PG_PASS=tooljet
 PG_HOST=postgres
+AI_PORT=${AI_PORT:-8080}
+NEO4JPASSWORD=$(openssl rand -base64 12)
 ENVEOF
     ok "Created .env file"
   fi
