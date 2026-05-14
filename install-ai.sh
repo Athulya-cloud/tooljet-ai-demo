@@ -1,6 +1,17 @@
 #!/bin/bash
 set -e
+START_PORT=8000
+END_PORT=8010
 
+find_free_port() {
+  for ((port=$START_PORT; port<=$END_PORT; port++)); do
+    if ! lsof -i :$port >/dev/null 2>&1; then
+      echo $port
+      return 0
+    fi
+  done
+  return 1
+}
 GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; NC='\033[0m'
 ok()   { echo -e "${GREEN}✔ $1${NC}"; }
 fail() { echo -e "${RED}✘ $1${NC}"; exit 1; }
@@ -49,6 +60,8 @@ PG_DB=tooljet_db
 PG_USER=tooljet
 PG_PASS=tooljet
 PG_HOST=postgres
+AI_PORT=${AI_PORT:-8080}
+NEO4JPASSWORD=$(openssl rand -base64 12)
 ENVEOF
     ok "Created .env file"
   fi
@@ -70,14 +83,14 @@ docker compose -f docker-compose.yaml -f docker-compose.ai.yml up -d \
 # step 7: health check
 info "Waiting for services to be ready..."
 sleep 5
-curl -sf http://localhost:8080 >/dev/null \
+curl -sf http://localhost:8000 >/dev/null \
   && ok "AI Server is healthy!" \
-  || info "AI Server still starting up — check http://localhost:8080 in a moment"
+  || info "AI Server still starting up — check http://localhost:8000 in a moment"
 
 echo ""
 echo "========================================"
 echo "  ToolJet      → http://localhost:80"
-echo "  AI Server    → http://localhost:8080"
+echo "  AI Server    → http://localhost:8000"
 echo "  Neo4j        → http://localhost:7474"
 echo "========================================"
 echo ""
