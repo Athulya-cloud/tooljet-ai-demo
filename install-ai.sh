@@ -88,7 +88,7 @@ sleep 5
 curl -sf http://localhost:8000 >/dev/null \
   && ok "AI Server is healthy!" \
   || info "AI Server still starting up — check http://localhost:8000 in a moment"
-
+source .env
 echo ""
 echo "========================================"
 echo "  ToolJet      → http://localhost:80"
