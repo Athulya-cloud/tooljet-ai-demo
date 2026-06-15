@@ -61,7 +61,6 @@ PG_USER=tooljet
 PG_PASS=tooljet
 PG_HOST=postgres
 AI_PORT=${AI_PORT:-$(find_free_port)}
-NEO4J_PASSWORD=$(openssl rand -hex 16)
 NEO4J_HTTP_PORT=${NEO4J_HTTP_PORT:-7474}
 NEO4J_BOLT_PORT=${NEO4J_BOLT_PORT:-7687}
 ENVEOF
@@ -76,6 +75,17 @@ info "Downloading AI services..."
 curl -sSL https://raw.githubusercontent.com/athulya-cloud/tooljet-ai-demo/main/docker-compose.ai.yml \
   -o docker-compose.ai.yml && ok "Downloaded docker-compose.ai.yml"
 
+# step 5b: generate Neo4j secret (Docker secret, not an env var)
+info "Generating Neo4j credentials..."
+mkdir -p secrets
+if [ ! -f "secrets/neo4j_auth.txt" ]; then
+  echo "neo4j/$(openssl rand -hex 16)" > secrets/neo4j_auth.txt
+  chmod 600 secrets/neo4j_auth.txt
+  ok "Created Neo4j secret (secrets/neo4j_auth.txt)"
+else
+  ok "Neo4j secret already exists"
+fi
+
 # step 6: start everything
 info "Starting all services..."
 docker compose -f docker-compose.yaml -f docker-compose.ai.yml up -d \
@@ -85,10 +95,10 @@ docker compose -f docker-compose.yaml -f docker-compose.ai.yml up -d \
 # step 7: health check
 info "Waiting for services to be ready..."
 sleep 5
-curl -sf http://localhost:8000 >/dev/null \
-  && ok "AI Server is healthy!" \
-  || info "AI Server still starting up — check http://localhost:8000 in a moment"
 source .env
+curl -sf "http://localhost:${AI_PORT}" >/dev/null \
+  && ok "AI Server is healthy!" \
+  || info "AI Server still starting up — check http://localhost:${AI_PORT} in a moment"
 echo ""
 echo "========================================"
 echo "  ToolJet      → http://localhost:80"
