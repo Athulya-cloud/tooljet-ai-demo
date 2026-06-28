@@ -48,10 +48,14 @@ if [ ! -f "docker-compose.yaml" ] && [ ! -f "docker-compose.yml" ]; then
   # create default .env if missing
   if [ ! -f ".env" ]; then
     info "Creating default .env file..."
+LOCKBOX_MASTER_KEY=$(openssl rand -hex 32)
+SECRET_KEY_BASE=$(openssl rand -hex 64)
 cat > .env << ENVEOF
 TOOLJET_HOST=http://localhost:80
-LOCKBOX_MASTER_KEY=changeme_lockbox_key
-SECRET_KEY_BASE=changeme_secret_key
+LOCKBOX_MASTER_KEY=${LOCKBOX_MASTER_KEY}
+SECRET_KEY_BASE=${SECRET_KEY_BASE}
+
+
 TOOLJET_DB_USER=tooljet
 TOOLJET_DB_PASS=tooljet
 TOOLJET_DB_HOST=postgres
